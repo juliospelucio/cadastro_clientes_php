@@ -19,6 +19,18 @@ if (isset($_POST['insert'])) {
     $controller->insert($fields);
 }
 
+if (isset($_POST['edit'])) {
+    if (!isset($_POST['admin'])) $_POST['admin'] = 0;
+    $fields = array(
+        'id' => $_POST['id'],
+        'name' => $_POST['name'],
+        'cpf' => $_POST['cpf'],
+        'email' => $_POST['email'],
+        'admin' => $_POST['admin']
+    );
+    $controller->edit($fields);
+}
+
 
 class UserController
 {
@@ -64,7 +76,19 @@ class UserController
         exit;
     }
 
-
+    public function edit($fields)
+    {
+        if ($this->user->updateUser($fields)) {
+            $dados = array('msg' => 'Erro ao editar os dados do usuário', 'type' => 'success');
+            $_SESSION['data'] = $dados;
+            header('location: ../view/edit.php?id=' . $fields['id']);
+            exit;
+        }
+        $dados = array('msg' => 'Erro ao editar os dados do usuário', 'type' => 'error');
+        $_SESSION['data'] = $dados;
+        header('location: ../view/edit.php?id=' . $fields['id']);
+        exit;
+    }
 
 
     public function cpf_format($string)
