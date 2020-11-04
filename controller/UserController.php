@@ -32,6 +32,11 @@ if (isset($_POST['edit'])) {
 }
 
 
+if (isset($_GET['delete']) && isset($_GET['id'])) {
+    $controller->delete($_GET['id']);
+}
+
+
 class UserController
 {
 
@@ -87,6 +92,20 @@ class UserController
         $dados = array('msg' => 'Erro ao editar os dados do usuário', 'type' => 'error');
         $_SESSION['data'] = $dados;
         header('location: ../view/edit.php?id=' . $fields['id']);
+        exit;
+    }
+
+    public function delete($id)
+    {
+        if ($this->user->deleteUser($id)) {
+            $dados = array('msg' => 'Usuário apagado com sucesso', 'type' => 'success');
+            $_SESSION['data'] = $dados;
+            header('location: ../view/index.php');
+            exit;
+        }
+        $dados = array('msg' => 'Erro ao apagar usuário', 'type' => 'error');
+        $_SESSION['data'] = $dados;
+        header('location: ../view/index.php');
         exit;
     }
 
