@@ -7,6 +7,17 @@ $controller = new UserController();
 // var_dump($controller->loadAllUsers());
 // var_dump($controller->getUser(1));
 
+if (isset($_POST['insert'])) {
+    if (!isset($_POST['admin'])) $_POST['admin'] = 0;
+    $fields = array(
+        'name' => $_POST['name'],
+        'cpf' => $_POST['cpf'],
+        'email' => $_POST['email'],
+        'password' => md5("123456"), //default password
+        'admin' => $_POST['admin']
+    );
+    $controller->insert($fields);
+}
 
 
 class UserController
@@ -24,6 +35,11 @@ class UserController
         return $this->user->getUsers();
     }
 
+    public function loadNonAdmin()
+    {
+        return $this->user->getNonAdmin();
+    }
+
     public function getUser($id)
     {
         $user =  $this->user->getUser($id);
@@ -35,25 +51,24 @@ class UserController
 
     public function insert($fields)
     {
+        $this->user->setAttributes($fields);
         if ($this->user->insertUser()) {
             $dados = array('msg' => 'Usuário cadastrado com sucesso', 'type' => 'success');
             $_SESSION['data'] = $dados;
-            return 1;
-            // header('location: ../view/users.php');
+            header('location: ../view/index.php');
             exit;
         }
         $dados = array('msg' => 'Erro ao cadastrar novo usuário', 'type' => 'error');
         $_SESSION['data'] = $dados;
-        return 0;
-        // header('location: ../view/users.php');
+        header('location: ../view/index.php');
         exit;
     }
 
 
-    
 
-    public function cpf_format($string){
+
+    public function cpf_format($string)
+    {
         return substr($string, 0, -2) . '-' . substr($string, -2);
     }
-    
 }

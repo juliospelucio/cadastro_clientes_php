@@ -14,6 +14,14 @@ class User extends DBConnection
 
     protected $admin;
 
+    public function setAttributes(array $attributes)
+    {
+
+        foreach ($attributes as $key => $value) {
+            $this->$key = $value;
+        }
+    }
+
     public function getUsers()
     {
         try {
@@ -84,6 +92,17 @@ class User extends DBConnection
             $params = array(':id' => $id);
             $dbc = new DBConnection();
             return $dbc->runQuery($sql, $params);
+        } catch (PDOException $e) {
+            echo __LINE__ . $e->getMessage();
+        }
+    }
+
+    public function getNonAdmin()
+    {
+        try {
+            $sql = "SELECT * FROM `users` WHERE `admin` = '0'";
+            $dbc = new DBConnection();
+            return $dbc->getQuery($sql);
         } catch (PDOException $e) {
             echo __LINE__ . $e->getMessage();
         }
